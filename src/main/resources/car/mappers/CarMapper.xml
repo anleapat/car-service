@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="car.app.mapper.CarMapper">
+    <resultMap id="BaseResultMap" type="car.app.entity.Car">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="origin" jdbcType="VARCHAR" property="origin"/>
+        <result column="produce_year" jdbcType="DATE" property="produceYear"/>
+        <result column="horse_power" jdbcType="INTEGER" property="horsePower"/>
+        <result column="miles_per_gallon" jdbcType="NUMERIC" property="milesPerGallon"/>
+        <result column="acceleration" jdbcType="NUMERIC" property="acceleration"/>
+        <result column="displacement" jdbcType="INTEGER" property="displacement"/>
+        <result column="weight_in_lbs" jdbcType="INTEGER" property="weightInLbs"/>
+        <result column="car_name" jdbcType="VARCHAR" property="carName"/>
+        <result column="cylinders" jdbcType="INTEGER" property="cylinders"/>
+        <result column="create_by" jdbcType="BIGINT" property="createBy"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="last_update_by" jdbcType="BIGINT" property="lastUpdateBy"/>
+        <result column="last_update_date" jdbcType="TIMESTAMP" property="lastUpdateDate"/>
+        <result column="last_update_version" jdbcType="INTEGER" property="lastUpdateVersion"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, origin, produce_year, horse_power, miles_per_gallon, acceleration, displacement,weight_in_lbs,
+        car_name, cylinders, create_by, create_date, last_update_by, last_update_date,last_update_version
+    </sql>
+    <select id="select" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from cars_t where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="count" parameterType="car.app.entity.Car" resultType="int">
+        select count(1) from cars_t <include refid="Where_Condition"></include>
+    </select>
+
+    <select id="searchCars" parameterType="car.app.entity.Car" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from cars_t <include refid="Where_Condition"></include>
+        <if test="car.orderByValue != null and car.orderByValue != ''">
+            order by ${car.orderByValue}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset} , #{limit}
+        </if>
+    </select>
+
+    <sql id="Where_Condition">
+        <where>
+            <if test="car.origin != null and car.origin != ''">
+                and origin = #{car.origin,jdbcType=VARCHAR}
+            </if>
+            <if test="car.produceDateFrom != null">
+                and produce_year &gt;= #{car.produceDateFrom,jdbcType=DATE}
+            </if>
+            <if test="car.produceDateTo != null">
+                and produce_year &lt;= #{car.produceDateTo,jdbcType=DATE}
+            </if>
+            <if test="car.carName != null and car.carName != ''">
+                and car_name like concat('%',#{car.carName,jdbcType=VARCHAR},'%')
+            </if>
+        </where>
+    </sql>
+
+    <insert id="insert" parameterType="car.app.entity.Car">
+        insert into cars_t
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="origin != null">
+                origin,
+            </if>
+            <if test="produceYear != null">
+                produce_year,
+            </if>
+            <if test="horsePower != null">
+                horse_power,
+            </if>
+            <if test="milesPerGallon != null">
+                miles_per_gallon,
+            </if>
+            <if test="acceleration != null">
+                acceleration,
+            </if>
+            <if test="displacement != null">
+                displacement,
+            </if>
+            <if test="weightInLbs != null">
+                weight_in_lbs,
+            </if>
+            <if test="carName != null">
+                car_name,
+            </if>
+            <if test="cylinders != null">
+                cylinders,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="origin != null">
+                #{origin,jdbcType=VARCHAR},
+            </if>
+            <if test="produceYear != null">
+                #{produceYear,jdbcType=DATE},
+            </if>
+            <if test="horsePower != null">
+                #{horsePower,jdbcType=INTEGER},
+            </if>
+            <if test="milesPerGallon != null">
+                #{milesPerGallon,jdbcType=NUMERIC},
+            </if>
+            <if test="acceleration != null">
+                #{acceleration,jdbcType=NUMERIC},
+            </if>
+            <if test="displacement != null">
+                #{displacement,jdbcType=INTEGER},
+            </if>
+            <if test="weightInLbs != null">
+                #{weightInLbs,jdbcType=INTEGER},
+            </if>
+            <if test="carName != null">
+                #{carName,jdbcType=VARCHAR},
+            </if>
+            <if test="cylinders != null">
+                #{cylinders,jdbcType=INTEGER},
+            </if>
+
+        </trim>
+    </insert>
+    <update id="update" parameterType="car.app.entity.Car">
+        update cars_t
+        <set>
+            <if test="origin != null">
+                origin = #{origin,jdbcType=VARCHAR},
+            </if>
+            <if test="produceYear != null">
+                produce_year = #{produceYear,jdbcType=DATE},
+            </if>
+            <if test="horsePower != null">
+                horse_power = #{horsePower,jdbcType=INTEGER},
+            </if>
+            <if test="milesPerGallon != null">
+                miles_per_gallon = #{milesPerGallon,jdbcType=NUMERIC},
+            </if>
+            <if test="acceleration != null">
+                acceleration = #{acceleration,jdbcType=NUMERIC},
+            </if>
+            <if test="displacement != null">
+                displacement = #{displacement,jdbcType=INTEGER},
+            </if>
+            <if test="weightInLbs != null">
+                weight_in_lbs = #{weightInLbs,jdbcType=INTEGER},
+            </if>
+            <if test="carName != null">
+                car_name = #{carName,jdbcType=VARCHAR},
+            </if>
+            <if test="cylinders != null">
+                cylinders = #{cylinders,jdbcType=INTEGER},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=BIGINT},
+            </if>
+            <if test="createDate != null">
+                create_date = #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="lastUpdateBy != null">
+                last_update_by = #{lastUpdateBy,jdbcType=BIGINT},
+            </if>
+            <if test="lastUpdateDate != null">
+                last_update_date = #{lastUpdateDate,jdbcType=TIMESTAMP},
+            </if>
+            last_update_version = last_update_version+1,
+        </set>
+        where id = #{id,jdbcType=BIGINT} and last_update_version = #{lastUpdateVersion,jdbcType=INTEGER}
+    </update>
+</mapper>
