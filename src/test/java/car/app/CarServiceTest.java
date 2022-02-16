@@ -1,6 +1,5 @@
 package car.app;
 
-import car.app.config.DataSourceRegister;
 import car.app.entity.Car;
 import car.app.dto.CarDto;
 import car.app.dto.PageResult;
@@ -13,7 +12,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//@SpringBootTest
-//@Import(DataSourceRegister.class)
+@SpringBootTest
 public class CarServiceTest {
     @Autowired
     CarService carService;
@@ -60,7 +57,7 @@ public class CarServiceTest {
         carList1.forEach(car -> carService.saveCar(car));
     }
 
-//    @Test
+    @Test
     public void pageQueryTest() {
         for (int i = 0; i < 37; i++) {
             CarDto car = new CarDto();
@@ -75,7 +72,7 @@ public class CarServiceTest {
         }
     }
 
-//    @Test
+    @Test
     public void findTest() {
         for (int i = 0; i < 37; i++) {
             Car car = carService.find(1L);

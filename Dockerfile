@@ -1,5 +1,5 @@
-FROM openjdk:18-ea-jdk-slim
-LABEL maintainer=henry
+FROM openjdk:8-slim
+LABEL application=car-service-1.0
 
 RUN bash -c 'mkdir -p /app/lib'
 
