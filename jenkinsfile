@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    environment {
+        PATH = "/usr/local/bin:/usr/bin:$PATH:$MVN_HOME/bin:$JAVA_HOME/bin"
+        WORKSPACE="parking"
+        APPLICATION="car-service"
+        REGISTRY_URL="192.168.56.231:32098"
+    }
+    stages {
+        stage('Pull Code') {
+            steps {
+                sh 'set -x'
+                // Get some code from a GitHub repository
+                git 'https://gitee.com/dallasspan/car-service.git'
+                sh 'pwd'
+                sh 'ls -al'
+            }
+        }
+
+
+        stage('Build') {
+            steps {
+                echo "${params.param1}"
+                // maven build
+                sh 'mvn clean package -Dmaven.test.skip=true -U --settings settings.xml'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh """
+                    echo ${params.replicas}
+                    ssh root@node231master -C "chmod +x $JENKINS_HOME/$APPLICATION/build.sh"
+                    ssh root@node231master "cd $JENKINS_HOME/$APPLICATION && ./build.sh ${params.replicas}"
+                """
+            }
+        }
+    }
+}
+
