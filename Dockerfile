@@ -1,4 +1,4 @@
-FROM openjdk:8-slim
+FROM 192.168.1.37:5000/openjdk:8-slim
 LABEL application=car-service
 
 RUN bash -c 'mkdir -p /app/lib'

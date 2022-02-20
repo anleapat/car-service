@@ -12,7 +12,6 @@ pipeline {
                 sh 'set -x'
                 // Get some code from a GitHub repository
                 git 'https://gitee.com/dallasspan/car-service.git'
-                sh 'pwd'
                 sh 'ls -al'
             }
         }
@@ -20,7 +19,6 @@ pipeline {
 
         stage('Build') {
             steps {
-                echo "${params.param1}"
                 // maven build
                 sh 'mvn clean package -Dmaven.test.skip=true -U --settings settings.xml'
             }
