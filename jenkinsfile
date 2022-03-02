@@ -2,36 +2,51 @@ pipeline {
     agent any
     environment {
         PATH = "/usr/local/bin:/usr/bin:$PATH:$MVN_HOME/bin:$JAVA_HOME/bin"
-        WORKSPACE="parking"
-        APPLICATION="car-service"
-        REGISTRY_URL="192.168.56.231:32098"
+        NAMESPACE="parking"
+        DEPLOY="/opt/kubernetes-deploy/deploy.sh"
     }
+
     stages {
+        
         stage('Pull Code') {
             steps {
-                sh 'set -x'
+               sh 'set -x'
                 // Get some code from a GitHub repository
-                git 'https://gitee.com/dallasspan/car-service.git'
+                git 'git@192.168.56.231:car-service.git'
+                sh "git checkout -B ${params.BRANCH} origin/${params.BRANCH} -q -f"
+                sh 'pwd'
                 sh 'ls -al'
             }
+
         }
-
-
+        
         stage('Build') {
             steps {
-                // maven build
                 sh 'mvn clean package -Dmaven.test.skip=true -U --settings settings.xml'
             }
+
         }
         
         stage('Deploy') {
             steps {
                 sh """
-                    echo ${params.replicas}
-                    ssh root@node231master -C "chmod +x $JENKINS_HOME/$APPLICATION/build.sh"
-                    ssh root@node231master "cd $JENKINS_HOME/$APPLICATION && ./build.sh ${params.replicas}"
+                    TAG=`date '+%Y%m%d-%H%M%S'`
+                    echo "\$TAG"
+                    echo "${params.REGISTRY_URL}"
+                    ##build image
+                    IMAGE_URL="${params.REGISTRY_URL}/\$JOB_NAME:\$TAG"
+                    echo "\$IMAGE_URL"
+
+                    docker build -t $JOB_NAME:"\$TAG" .
+                    IMAGE_ID=`docker images | grep "\$JOB_NAME" | grep "\$TAG" | awk -F ' ' '{print \$3}'`
+                    docker tag "\$IMAGE_ID" "\$IMAGE_URL"
+                    docker push "\$IMAGE_URL"
+                    docker rmi -f "\$IMAGE_ID"
+                    
+                    ssh root@192.168.56.231 "$DEPLOY \$NAMESPACE \$IMAGE_URL \$JOB_NAME ${params.REPLICAS}"
                 """
             }
+
         }
     }
 }
