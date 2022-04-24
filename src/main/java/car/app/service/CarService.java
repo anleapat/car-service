@@ -24,12 +24,12 @@ public class CarService {
         return carMapper.update(car);
     }
 
-//    @TargetDataSource(name = "slave3")
+    @TargetDataSource(name = "slave3")
     public Car find(Long id) {
         return carMapper.select(id);
     }
 
-//    @TargetDataSource(name = "slave")
+    @TargetDataSource(name = "slave")
     public PageResult pageQuery(CarDto car, int curPage, int pageSize) {
         int total = carMapper.count(car);
         if (total > 0) {

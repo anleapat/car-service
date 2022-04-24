@@ -6,6 +6,7 @@ import car.app.dto.GroupByDto;
 import car.app.dto.PageResult;
 import car.app.entity.*;
 import car.app.service.CarService;
+import com.google.gson.Gson;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,12 @@ public class CarController {
     @Autowired
     CarService carService;
 
+    private static final Gson gson = new Gson();
+
     @ApiOperation(value = "searchCars", httpMethod = "POST")
     @RequestMapping(value = "/searchCars/{curPage}/{pageSize}", method = RequestMethod.POST)
     public BaseResult searchCars(@RequestBody CarDto car, @PathVariable("curPage") int curPage, @PathVariable("pageSize") int pageSize) {
+        log.info("searchCars param>{}", gson.toJson(car));
         try {
             car.setOrderByValue(" id desc ");
             PageResult pageResult = carService.pageQuery(car, curPage, pageSize);
@@ -47,6 +51,7 @@ public class CarController {
                 PageResult gbPageResult = PageResult.of(groupByDtos1, pageResult.getTotal());
                 return BaseResult.ok(gbPageResult);
             }
+            log.info("searchCars result>{}", gson.toJson(pageResult));
             return BaseResult.ok(pageResult);
         } catch (Exception ex) {
             log.error("findCarList failed", ex);
@@ -57,8 +62,10 @@ public class CarController {
     @ApiOperation(value = "getCarInfo", httpMethod = "GET")
     @RequestMapping(value = "/getCarInfo/{id}", method = RequestMethod.GET)
     public BaseResult getCarInfo(@PathVariable("id") long id) {
+        log.info("searchCars param>{}", id);
         try {
             Car car = carService.find(id);
+            log.info("searchCars result>{}", gson.toJson(car));
             return BaseResult.ok(car);
         } catch (Exception ex) {
             log.error("getCarInfo failed", ex);

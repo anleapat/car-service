@@ -32,7 +32,7 @@ pipeline {
                 sh """
                     TAG=`date '+%Y%m%d-%H%M%S'`
                     echo "\$TAG"
-                    echo "${params.REGISTRY_URL}"
+                    REGISTRY_URL='192.168.1.37:5000'
                     ##build image
                     IMAGE_URL="${params.REGISTRY_URL}/\$JOB_NAME:\$TAG"
                     echo "\$IMAGE_URL"

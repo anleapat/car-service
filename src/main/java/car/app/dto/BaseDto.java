@@ -1,5 +1,6 @@
 package car.app.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,5 +16,6 @@ public class BaseDto implements Serializable {
 
     private Date lastUpdateDate;
 
+    @JsonIgnore
     private Integer lastUpdateVersion;
 }

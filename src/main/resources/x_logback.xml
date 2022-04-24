@@ -9,21 +9,17 @@
 
 	<appender name="rollingFile"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>/app/logs/root.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>/app/logs/catalina.%d{yyyy-MM-dd}.log</fileNamePattern>
+		<file>/applogs/car-service/root.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>/applogs/car-service/root.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<maxHistory>7</maxHistory>
+			<maxFileSize>1MB</maxFileSize>
 		</rollingPolicy>
 		<encoder>
 			<pattern>%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
-	<springProfile name="default">
-		<logger name="org.springframework" level="INFO" />
-		<logger name="com.sintech" level="DEBUG" />
-		<!--log4jdbc -->
-		<logger name="jdbc.sqltiming" level="DEBUG" />
-	</springProfile>
 
 	<root level="INFO">
 		<appender-ref ref="console" />
