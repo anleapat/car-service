@@ -75,7 +75,7 @@ public class DataSourceConfig {
             ds.setTestWhileIdle(false);
             ds.setTimeBetweenEvictionRunsMillis(7000);
             ds.setMinEvictableIdleTimeMillis(70000);
-            return (DataSource) factory.build();
+            return ds;
         } catch (ClassNotFoundException e) {
             log.error("init datasource error", e);
         }

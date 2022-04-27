@@ -11,7 +11,7 @@
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>/applogs/car-service/root.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<fileNamePattern>/applogs/car-service/root.log.%d{yyyy-MM-dd}.%i</fileNamePattern>
+			<fileNamePattern>/applogs/car-service/root.log.%d{yyyyMMdd}.%i</fileNamePattern>
 			<maxHistory>7</maxHistory>
 			<maxFileSize>1MB</maxFileSize>
 		</rollingPolicy>
