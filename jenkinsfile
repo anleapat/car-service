@@ -3,7 +3,6 @@ pipeline {
     environment {
         PATH = "/usr/local/bin:/usr/bin:$PATH:$MVN_HOME/bin:$JAVA_HOME/bin"
         NAMESPACE="parking"
-        DEPLOY="/opt/kubernetes-deploy/deploy.sh"
     }
 
     stages {
@@ -34,16 +33,19 @@ pipeline {
                     echo "\$TAG"
                     REGISTRY_URL='192.168.1.37:5000'
                     ##build image
-                    IMAGE_URL="${params.REGISTRY_URL}/\$JOB_NAME:\$TAG"
+                    IMAGE_URL="\$REGISTRY_URL/\$JOB_NAME:\$TAG"
                     echo "\$IMAGE_URL"
 
-                    docker build -t $JOB_NAME:"\$TAG" .
+                    docker build -t \$JOB_NAME:"\$TAG" .
                     IMAGE_ID=`docker images | grep "\$JOB_NAME" | grep "\$TAG" | awk -F ' ' '{print \$3}'`
                     docker tag "\$IMAGE_ID" "\$IMAGE_URL"
                     docker push "\$IMAGE_URL"
                     docker rmi -f "\$IMAGE_ID"
-                    
-                    ssh root@192.168.56.231 "$DEPLOY \$NAMESPACE \$IMAGE_URL \$JOB_NAME ${params.REPLICAS}"
+
+                    scp car-service.yaml deploy.sh root@192.168.56.231:/tmp
+                    ssh root@192.168.56.231 "chmod 700 /tmp/deploy.sh"
+                    ssh root@192.168.56.231 "cd /tmp && ./deploy.sh \$NAMESPACE \$TAG \$JOB_NAME ${params.REPLICAS}"
+                    ##ssh root@192.168.56.231 "rm /tmp/{car-service.yaml,deploy.sh} -f"
                 """
             }
 
