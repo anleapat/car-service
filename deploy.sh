@@ -11,9 +11,10 @@ sed -i '''s/replicas_param/'$REPLICAS'/''' car-service.yaml
 sed -i '''s/tag_param/'$IMAGE'/''' car-service.yaml
 
 IS_EXISTS=`kubectl get deployment/$APPLICATION -n $NAMESPACE | grep $APPLICATION`
+
+DEPLOY_PARAM=""
 if [ "X$IS_EXISTS" != "X" ]; then
-  kubectl delete -f car-service.yaml
+  DEPLOY_PARAM="--record"
 fi
 
-#deploy
-kubectl create -f car-service.yaml
+kubectl apply -f car-service.yaml $DEPLOY_PARAM

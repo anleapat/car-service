@@ -5,6 +5,11 @@ metadata:
   namespace: parking
 spec:
   replicas: replicas_param
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%
+      maxUnavailable: 25%
   selector:
     matchLabels:
       app: car-service
@@ -27,7 +32,13 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.namespace
           name: car-service
-          image: 192.168.1.37:5000/car-service:tag_param
+          image: 192.168.56.1:5000/car-service:tag_param
+          livenessProbe:
+            httpGet:
+              path: /car/service/swagger-ui.html
+              port: 8037
+            initialDelaySeconds: 7
+            failureThreshold: 3
 #          resources:
 #            limits:
 #              cpu: 1000m
@@ -45,21 +56,21 @@ spec:
             path: /logs
       restartPolicy: Always
 
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: car-service-svc
-  namespace: parking
-  labels:
-    app: car-service-svc
-spec:
-  ports:
-    - name: http-8037
-      protocol: TCP
-      port: 8037
-      targetPort: 8037
-      nodePort: 31715
-  selector:
-    app: car-service
-  type: NodePort
+#---
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: car-service-svc
+#  namespace: parking
+#  labels:
+#    app: car-service-svc
+#spec:
+#  ports:
+#    - name: http-8037
+#      protocol: TCP
+#      port: 8037
+#      targetPort: 8037
+#      nodePort: 31715
+#  selector:
+#    app: car-service
+#  type: NodePort

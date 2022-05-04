@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,16 +72,24 @@ public class DataSourceConfig {
             ds.setValidationQuery("select 1");
             ds.setValidationQueryTimeout(3);
             ds.setValidationInterval(70000);
+            ds.setTestOnConnect(true);
             ds.setTestOnBorrow(true);
             ds.setTestOnReturn(false);
             ds.setTestWhileIdle(false);
             ds.setTimeBetweenEvictionRunsMillis(7000);
             ds.setMinEvictableIdleTimeMillis(70000);
+            // check connection
+            checkConnection(ds);
             return ds;
-        } catch (ClassNotFoundException e) {
-            log.error("init datasource error", e);
+        } catch (ClassNotFoundException | SQLException ex) {
+            log.error("init datasource error", ex);
+            throw new RuntimeException(ex);
         }
-        return null;
+    }
+
+    private void checkConnection(DataSource ds) throws SQLException {
+        PreparedStatement ps = ds.getConnection().prepareStatement("select 1");
+        ps.execute();
     }
 
 }
